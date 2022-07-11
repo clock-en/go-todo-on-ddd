@@ -1,0 +1,24 @@
+{
+    "name": "GoTodo",
+    "dockerComposeFile": "./docker-compose.yml",
+    "service": "api",
+    "workspaceFolder": "/usr/src/app",
+    "settings": {
+        "terminal.integrated.profiles": {
+            "path": "/bin/bash",
+            "overrideName": true
+        },
+        "go.toolsManagement.checkForUpdates": "off",
+        "go.gopath": "/go",
+        "go.gocodeAutoBuild": true,
+        "go.formatTool": "gofmt",
+        "go.useLanguageServer": true,
+        "editor.formatOnSave": false,
+        "[go]": {
+          "editor.formatOnSave": true
+        }
+    },
+    "extensions": [
+        "golang.go"
+    ]
+}

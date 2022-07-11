@@ -1,0 +1,48 @@
+version: '3'
+services:
+   # Service names
+  api:
+     # Dockerfile location
+    container_name: "go-todo-api"
+    build:
+      context: ..
+      dockerfile: ./.devcontainer/images/golang/Dockerfile
+    tty: true
+    stdin_open: true
+    command: /bin/bash
+    env_file:
+      # Ensure that the variables in .env match the same variables in devcontainer.json
+      - .env.development
+    volumes: 
+      - ../src/app:/usr/src/app
+    # default command so things don't shut down after the process ends.
+    ports:
+      - 8080:8080
+    expose:
+      - "8080"
+    networks:
+      - dev-net
+  mysql:
+    container_name: "go-todo-db"
+    build:
+      context: ./images/mysql
+      dockerfile: ./Dockerfile
+    # M1マック向けのplatform設定
+    platform: linux/x86_64
+    restart: always
+    volumes:
+      - db-data:/var/lib/mysql
+    env_file:
+      - .env.development
+    ports:
+      - 3306:3306
+    expose:
+      - "3306"
+    networks:
+      - dev-net
+networks:
+  dev-net:
+    driver: bridge
+volumes:
+  db-data:
+    driver: local
