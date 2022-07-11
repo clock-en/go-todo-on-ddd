@@ -1,8 +1,6 @@
 version: '3'
 services:
-   # Service names
   api:
-     # Dockerfile location
     container_name: "go-todo-api"
     build:
       context: ..
@@ -11,11 +9,9 @@ services:
     stdin_open: true
     command: /bin/bash
     env_file:
-      # Ensure that the variables in .env match the same variables in devcontainer.json
       - .env.development
     volumes: 
-      - ../src/app:/usr/src/app
-    # default command so things don't shut down after the process ends.
+      - ..:/workspace
     ports:
       - 8080:8080
     expose:
