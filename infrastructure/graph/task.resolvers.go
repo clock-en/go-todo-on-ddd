@@ -5,7 +5,9 @@ package graph
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
+	"math/big"
 
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/generated"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/model"
@@ -13,7 +15,14 @@ import (
 
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTask) (*model.Task, error) {
-	panic(fmt.Errorf("not implemented"))
+	id, _ := rand.Int(rand.Reader, big.NewInt(100))
+	task := &model.Task{
+		ID:      fmt.Sprintf("tasks%d", id),
+		Title:   input.Title,
+		Content: input.Content,
+	}
+	r.tasks = append(r.tasks, task)
+	return task, nil
 }
 
 // Task is the resolver for the task field.
@@ -23,7 +32,7 @@ func (r *queryResolver) Task(ctx context.Context, id string) (*model.Task, error
 
 // Tasks is the resolver for the tasks field.
 func (r *queryResolver) Tasks(ctx context.Context) ([]*model.Task, error) {
-	panic(fmt.Errorf("not implemented"))
+	return r.tasks, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
