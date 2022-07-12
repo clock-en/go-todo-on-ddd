@@ -2,8 +2,7 @@
     "name": "GoTodo",
     "dockerComposeFile": "./docker-compose.yml",
     "service": "api",
-    "remoteUser": "developer",
-    "workspaceFolder": "/workspace",
+    "workspaceFolder": "/go/src/app",
     "settings": {
         "terminal.integrated.profiles": {
             "path": "/bin/bash",
@@ -20,6 +19,7 @@
         }
     },
     "extensions": [
-        "golang.go"
+        "golang.go",
+        "graphql.vscode-graphql"
     ]
 }
