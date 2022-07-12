@@ -2,7 +2,8 @@
     "name": "GoTodo",
     "dockerComposeFile": "./docker-compose.yml",
     "service": "api",
-    "workspaceFolder": "/usr/src/app",
+    "remoteUser": "developer",
+    "workspaceFolder": "/workspace",
     "settings": {
         "terminal.integrated.profiles": {
             "path": "/bin/bash",
@@ -15,7 +16,7 @@
         "go.useLanguageServer": true,
         "editor.formatOnSave": false,
         "[go]": {
-          "editor.formatOnSave": true
+            "editor.formatOnSave": true
         }
     },
     "extensions": [
