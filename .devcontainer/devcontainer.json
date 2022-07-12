@@ -20,6 +20,7 @@
         }
     },
     "extensions": [
-        "golang.go"
+        "golang.go",
+        "graphql.vscode-graphql"
     ]
 }
