@@ -2,7 +2,6 @@
     "name": "GoTodo",
     "dockerComposeFile": "./docker-compose.yml",
     "service": "api",
-    "remoteUser": "developer",
     "workspaceFolder": "/go/src/app",
     "settings": {
         "terminal.integrated.profiles": {
