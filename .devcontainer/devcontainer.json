@@ -3,7 +3,7 @@
     "dockerComposeFile": "./docker-compose.yml",
     "service": "api",
     "remoteUser": "developer",
-    "workspaceFolder": "/workspace",
+    "workspaceFolder": "/go/src/app",
     "settings": {
         "terminal.integrated.profiles": {
             "path": "/bin/bash",
