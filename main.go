@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	_ "github.com/99designs/gqlgen"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph"
