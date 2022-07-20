@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/99designs/gqlgen v0.17.12
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/vektah/gqlparser/v2 v2.4.6
 )
 

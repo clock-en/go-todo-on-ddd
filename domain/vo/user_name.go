@@ -5,8 +5,12 @@ import (
 	"regexp"
 )
 
-// UserName represents value obejct user name
+type IUserName interface {
+	Value() string
+}
+
 type UserName struct {
+	IUserName
 	value string
 }
 

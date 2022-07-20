@@ -4,8 +4,12 @@ import (
 	"fmt"
 )
 
-// TaskTitle represents value obejct user name
+type ITaskTitle interface {
+	Value()
+}
+
 type TaskTitle struct {
+	ITaskTitle
 	value string
 }
 

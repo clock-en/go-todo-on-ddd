@@ -2,11 +2,13 @@ type Task {
     id: ID!
     title: String!
     content: String!
+    userId: ID!
 }
 
 input CreateTask {
   title: String!
   content: String!
+  userId: ID!
 }
 
 extend type Query {

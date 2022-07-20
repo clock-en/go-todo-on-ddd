@@ -4,9 +4,17 @@ import (
 	"fmt"
 )
 
-// Password represents value obejct id (Table PK)
+type IId interface {
+	Value() int
+}
+
 type Id struct {
+	IId
 	value int
+}
+
+func (i Id) Value() int {
+	return i.value
 }
 
 func NewId(value int) (*Id, error) {
@@ -14,10 +22,6 @@ func NewId(value int) (*Id, error) {
 		return nil, fmt.Errorf("ID must be greater than or equal to 1 character")
 	}
 	return &Id{value: value}, nil
-}
-
-func (i Id) Value() int {
-	return i.value
 }
 
 func isInvalidId(value int) bool {

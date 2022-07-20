@@ -4,8 +4,12 @@ import (
 	"fmt"
 )
 
-// TaskContent represents value obejct user name
+type ITaskContent interface {
+	Value() string
+}
+
 type TaskContent struct {
+	ITaskContent
 	value string
 }
 

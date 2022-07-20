@@ -5,9 +5,17 @@ import (
 	"regexp"
 )
 
-// Email represents value obejct e-mail address
+type IEmail interface {
+	Value() string
+}
+
 type Email struct {
+	IEmail
 	value string
+}
+
+func (e Email) Value() string {
+	return e.value
 }
 
 func NewEmail(value string) (*Email, error) {
@@ -18,10 +26,6 @@ func NewEmail(value string) (*Email, error) {
 		return nil, fmt.Errorf("email must be no longer than 254 characters")
 	}
 	return &Email{value: value}, nil
-}
-
-func (e Email) Value() string {
-	return e.value
 }
 
 func isInvalidPatternEmail(value string) bool {

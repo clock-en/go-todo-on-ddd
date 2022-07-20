@@ -8,9 +8,23 @@ import (
 	"unicode"
 )
 
-// Password represents value obejct password
+type IPassword interface {
+	Value() string
+	Hash() string
+}
+
 type Password struct {
+	IPassword
 	value string
+}
+
+func (p Password) Value() string {
+	return p.value
+}
+
+func (p Password) Hash() string {
+	b := sha256.Sum256([]byte(p.value))
+	return hex.EncodeToString(b[:])
 }
 
 func NewPassword(value string) (*Password, error) {
@@ -24,15 +38,6 @@ func NewPassword(value string) (*Password, error) {
 		return nil, fmt.Errorf("password must be at least 8 and no more than 100 characters")
 	}
 	return &Password{value: value}, nil
-}
-
-func (p Password) Value() string {
-	return p.value
-}
-
-func (p Password) Hash() string {
-	b := sha256.Sum256([]byte(p.value))
-	return hex.EncodeToString(b[:])
 }
 
 func isNotIncludeRequiredStringInPassword(value string) bool {
