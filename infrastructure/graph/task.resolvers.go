@@ -26,6 +26,7 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTas
 	taskEntity := entity.NewTask(*id, *title, *content, *userID)
 
 	taskDao := dao.NewTaskDao()
+	defer taskDao.Close()
 	task, err := taskDao.CreateTask(*taskEntity)
 	if err != nil {
 		return nil, err

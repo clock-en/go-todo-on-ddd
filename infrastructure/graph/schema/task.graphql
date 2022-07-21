@@ -6,9 +6,10 @@ type Task {
 }
 
 input CreateTask {
-  title: String!
-  content: String!
-  userID: ID!
+    id: ID!
+    title: String!
+    content: String!
+    userID: ID!
 }
 
 extend type Query {

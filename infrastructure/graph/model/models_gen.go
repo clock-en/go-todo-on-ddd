@@ -3,12 +3,14 @@
 package model
 
 type CreateTask struct {
+	ID      string `json:"id"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
 	UserID  string `json:"userID"`
 }
 
 type CreateUser struct {
+	ID       string `json:"id"`
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
