@@ -4,7 +4,6 @@ import (
 	"fmt"
 )
 
-// TaskContent represents value obejct user name
 type TaskContent struct {
 	value string
 }

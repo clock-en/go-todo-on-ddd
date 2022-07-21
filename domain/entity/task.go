@@ -4,21 +4,20 @@ import (
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
 )
 
-// Task represents entity
 type Task struct {
-	id      vo.Id
+	id      vo.ID
 	title   vo.TaskTitle
 	content vo.TaskContent
-	userId  vo.Id
+	userID  vo.ID
 }
 
 type Tasks []Task
 
-func NewTask(id vo.Id, title vo.TaskTitle, content vo.TaskContent, userId vo.Id) *Task {
-	return &Task{id: id, title: title, content: content, userId: userId}
+func NewTask(id vo.ID, title vo.TaskTitle, content vo.TaskContent, userID vo.ID) *Task {
+	return &Task{id: id, title: title, content: content, userID: userID}
 }
 
-func (t Task) Id() vo.Id {
+func (t Task) ID() vo.ID {
 	return t.id
 }
 
@@ -30,6 +29,6 @@ func (t Task) Content() vo.TaskContent {
 	return t.content
 }
 
-func (t Task) UserId() vo.Id {
-	return t.userId
+func (t Task) UserID() vo.ID {
+	return t.userID
 }

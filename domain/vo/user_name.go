@@ -5,7 +5,6 @@ import (
 	"regexp"
 )
 
-// UserName represents value obejct user name
 type UserName struct {
 	value string
 }

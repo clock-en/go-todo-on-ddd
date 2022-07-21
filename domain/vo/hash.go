@@ -1,6 +1,5 @@
 package vo
 
-// Hash represents value obejct Hashed password
 type Hash struct {
 	value string
 }

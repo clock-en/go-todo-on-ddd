@@ -2,24 +2,37 @@ package vo
 
 import (
 	"fmt"
+
+	"github.com/google/uuid"
 )
 
-// Password represents value obejct id (Table PK)
-type Id struct {
-	value int
+type ID struct {
+	value string
 }
 
-func NewId(value int) (*Id, error) {
-	if isInvalidId(value) {
-		return nil, fmt.Errorf("ID must be greater than or equal to 1 character")
-	}
-	return &Id{value: value}, nil
-}
-
-func (i Id) Value() int {
+func (i ID) Value() string {
 	return i.value
 }
 
-func isInvalidId(value int) bool {
-	return 0 < value
+func NewID(value string) (*ID, error) {
+	if isInvalidUUID(value) {
+		return nil, fmt.Errorf("wrong ID")
+	}
+	return &ID{value: value}, nil
+}
+
+func isInvalidUUID(value string) bool {
+	valueID, err := uuid.Parse(value)
+	if err != nil || isInvalidUUIDVersion(valueID) {
+		return true
+	}
+	return false
+}
+
+func isInvalidUUIDVersion(valueID uuid.UUID) bool {
+	id, err := uuid.NewRandom()
+	if err != nil {
+		return true
+	}
+	return valueID.Version() != id.Version()
 }

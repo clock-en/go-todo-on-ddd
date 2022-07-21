@@ -5,9 +5,10 @@ type User {
 }
 
 input CreateUser {
-  name: String!
-  email: String!
-  password: String!
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
 }
 
 extend type Query {
