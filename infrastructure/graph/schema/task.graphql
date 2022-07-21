@@ -2,13 +2,13 @@ type Task {
     id: ID!
     title: String!
     content: String!
-    userId: ID!
+    userID: ID!
 }
 
 input CreateTask {
   title: String!
   content: String!
-  userId: ID!
+  userID: ID!
 }
 
 extend type Query {

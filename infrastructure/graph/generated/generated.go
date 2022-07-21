@@ -170,7 +170,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Task.Title(childComplexity), true
 
-	case "Task.userId":
+	case "Task.userID":
 		if e.complexity.Task.UserID == nil {
 			break
 		}
@@ -272,13 +272,13 @@ var sources = []*ast.Source{
     id: ID!
     title: String!
     content: String!
-    userId: ID!
+    userID: ID!
 }
 
 input CreateTask {
   title: String!
   content: String!
-  userId: ID!
+  userID: ID!
 }
 
 extend type Query {
@@ -473,8 +473,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_title(ctx, field)
 			case "content":
 				return ec.fieldContext_Task_content(ctx, field)
-			case "userId":
-				return ec.fieldContext_Task_userId(ctx, field)
+			case "userID":
+				return ec.fieldContext_Task_userID(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Task", field.Name)
 		},
@@ -601,8 +601,8 @@ func (ec *executionContext) fieldContext_Query_task(ctx context.Context, field g
 				return ec.fieldContext_Task_title(ctx, field)
 			case "content":
 				return ec.fieldContext_Task_content(ctx, field)
-			case "userId":
-				return ec.fieldContext_Task_userId(ctx, field)
+			case "userID":
+				return ec.fieldContext_Task_userID(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Task", field.Name)
 		},
@@ -666,8 +666,8 @@ func (ec *executionContext) fieldContext_Query_tasks(ctx context.Context, field 
 				return ec.fieldContext_Task_title(ctx, field)
 			case "content":
 				return ec.fieldContext_Task_content(ctx, field)
-			case "userId":
-				return ec.fieldContext_Task_userId(ctx, field)
+			case "userID":
+				return ec.fieldContext_Task_userID(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Task", field.Name)
 		},
@@ -999,8 +999,8 @@ func (ec *executionContext) fieldContext_Task_content(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Task_userId(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Task_userId(ctx, field)
+func (ec *executionContext) _Task_userID(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_userID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1030,7 +1030,7 @@ func (ec *executionContext) _Task_userId(ctx context.Context, field graphql.Coll
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Task_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Task_userID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Task",
 		Field:      field,
@@ -2955,7 +2955,7 @@ func (ec *executionContext) unmarshalInputCreateTask(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "content", "userId"}
+	fieldsInOrder := [...]string{"title", "content", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -2978,10 +2978,10 @@ func (ec *executionContext) unmarshalInputCreateTask(ctx context.Context, obj in
 			if err != nil {
 				return it, err
 			}
-		case "userId":
+		case "userID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			it.UserID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -3234,9 +3234,9 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "userId":
+		case "userID":
 
-			out.Values[i] = ec._Task_userId(ctx, field, obj)
+			out.Values[i] = ec._Task_userID(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

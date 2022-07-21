@@ -16,13 +16,13 @@ var (
 	port     string
 )
 
-type SqlHandler struct {
+type sqlHandler struct {
 	connect *sql.DB
 }
 
-func newSqlHandler() *SqlHandler {
+func newSqlHandler() *sqlHandler {
 	db := getConnect()
-	return &SqlHandler{connect: db}
+	return &sqlHandler{connect: db}
 }
 
 func getConnect() *sql.DB {

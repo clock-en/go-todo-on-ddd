@@ -4,12 +4,7 @@ import (
 	"fmt"
 )
 
-type ITaskTitle interface {
-	Value()
-}
-
 type TaskTitle struct {
-	ITaskTitle
 	value string
 }
 

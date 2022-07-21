@@ -5,12 +5,7 @@ import (
 	"regexp"
 )
 
-type IEmail interface {
-	Value() string
-}
-
 type Email struct {
-	IEmail
 	value string
 }
 

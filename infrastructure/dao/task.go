@@ -5,27 +5,21 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type ITaskDao interface {
-	CreateTask()
-	Close()
-}
-
 type TaskDao struct {
-	sqlHandler *SqlHandler
-	ITaskDao
+	handler *sqlHandler
 }
 
 func (t TaskDao) CreateTask(task entity.Task) (entity.Task, error) {
 	const sql = "INSERT INTO tasks (task,limitDate,status) VALUES (?, ?, ?);"
-	_, err := t.sqlHandler.connect.Exec(sql, task.Title(), task.Content(), task.UserId())
+	_, err := t.handler.connect.Exec(sql, task.Title(), task.Content(), task.UserID())
 	return task, err
 }
 
 func (t TaskDao) Close() {
-	t.sqlHandler.connect.Close()
+	t.handler.connect.Close()
 }
 
 func NewTaskDao() *TaskDao {
 	sqlHandler := newSqlHandler()
-	return &TaskDao{sqlHandler: sqlHandler}
+	return &TaskDao{handler: sqlHandler}
 }

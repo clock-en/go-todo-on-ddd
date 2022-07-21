@@ -5,24 +5,39 @@ package graph
 
 import (
 	"context"
-	"crypto/rand"
 	"fmt"
-	"math/big"
 
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/dao"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/generated"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/model"
+	"github.com/google/uuid"
 )
 
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTask) (*model.Task, error) {
-	id, _ := rand.Int(rand.Reader, big.NewInt(100))
-	task := &model.Task{
-		ID:      fmt.Sprintf("tasks%d", id),
-		Title:   input.Title,
-		Content: input.Content,
+	generatedID, _ := uuid.NewRandom()
+	id, err := vo.NewID(generatedID.String())
+	title, err := vo.NewTaskTitle(input.Title)
+	content, err := vo.NewTaskContent(input.Content)
+	userID, err := vo.NewID(input.UserID)
+
+	taskEntity := entity.NewTask(*id, *title, *content, *userID)
+
+	taskDao := dao.NewTaskDao()
+	task, err := taskDao.CreateTask(*taskEntity)
+	if err != nil {
+		return nil, err
 	}
-	r.tasks = append(r.tasks, task)
-	return task, nil
+	taskDataModel := &model.Task{
+		ID:      task.ID().Value(),
+		Title:   task.Title().Value(),
+		Content: task.Content().Value(),
+		UserID:  task.UserID().Value(),
+	}
+
+	return taskDataModel, nil
 }
 
 // Task is the resolver for the task field.

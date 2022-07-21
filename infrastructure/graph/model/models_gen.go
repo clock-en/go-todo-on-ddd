@@ -5,7 +5,7 @@ package model
 type CreateTask struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
-	UserID  string `json:"userId"`
+	UserID  string `json:"userID"`
 }
 
 type CreateUser struct {
@@ -18,7 +18,7 @@ type Task struct {
 	ID      string `json:"id"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
-	UserID  string `json:"userId"`
+	UserID  string `json:"userID"`
 }
 
 type User struct {

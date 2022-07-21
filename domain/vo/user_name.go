@@ -5,12 +5,7 @@ import (
 	"regexp"
 )
 
-type IUserName interface {
-	Value() string
-}
-
 type UserName struct {
-	IUserName
 	value string
 }
 

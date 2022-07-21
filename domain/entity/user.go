@@ -4,21 +4,19 @@ import (
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
 )
 
-// User represents entity
 type User struct {
-	id       vo.Id
-	name     vo.UserName
-	email    vo.Email
-	password vo.Password
+	id    vo.ID
+	name  vo.UserName
+	email vo.Email
 }
 
 type Users []User
 
-func NewUser(id vo.Id, name vo.UserName, email vo.Email, password vo.Password) *User {
-	return &User{id: id, name: name, email: email, password: password}
+func NewUser(id vo.ID, name vo.UserName, email vo.Email) *User {
+	return &User{id: id, name: name, email: email}
 }
 
-func (u User) Id() vo.Id {
+func (u User) ID() vo.ID {
 	return u.id
 }
 
@@ -28,8 +26,4 @@ func (u User) Name() vo.UserName {
 
 func (u User) Email() vo.Email {
 	return u.email
-}
-
-func (u User) Password() vo.Password {
-	return u.password
 }

@@ -2,28 +2,37 @@ package vo
 
 import (
 	"fmt"
+
+	"github.com/google/uuid"
 )
 
-type IId interface {
-	Value() int
+type ID struct {
+	value string
 }
 
-type Id struct {
-	IId
-	value int
-}
-
-func (i Id) Value() int {
+func (i ID) Value() string {
 	return i.value
 }
 
-func NewId(value int) (*Id, error) {
-	if isInvalidId(value) {
-		return nil, fmt.Errorf("ID must be greater than or equal to 1 character")
+func NewID(value string) (*ID, error) {
+	if isInvalidUUID(value) {
+		return nil, fmt.Errorf("wrong ID")
 	}
-	return &Id{value: value}, nil
+	return &ID{value: value}, nil
 }
 
-func isInvalidId(value int) bool {
-	return 0 < value
+func isInvalidUUID(value string) bool {
+	valueID, err := uuid.Parse(value)
+	if err != nil || isInvalidUUIDVersion(valueID) {
+		return true
+	}
+	return false
+}
+
+func isInvalidUUIDVersion(valueID uuid.UUID) bool {
+	id, err := uuid.NewRandom()
+	if err != nil {
+		return true
+	}
+	return valueID.Version() != id.Version()
 }

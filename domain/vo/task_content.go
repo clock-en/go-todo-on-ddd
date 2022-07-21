@@ -4,12 +4,7 @@ import (
 	"fmt"
 )
 
-type ITaskContent interface {
-	Value() string
-}
-
 type TaskContent struct {
-	ITaskContent
 	value string
 }
 

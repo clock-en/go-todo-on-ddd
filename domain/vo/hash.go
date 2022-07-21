@@ -1,12 +1,6 @@
 package vo
 
-type IHash interface {
-	Value() string
-	Verify() bool
-}
-
 type Hash struct {
-	IHash
 	value string
 }
 

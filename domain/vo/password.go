@@ -8,13 +8,7 @@ import (
 	"unicode"
 )
 
-type IPassword interface {
-	Value() string
-	Hash() string
-}
-
 type Password struct {
-	IPassword
 	value string
 }
 
