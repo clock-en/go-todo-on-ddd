@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/dao"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/generated"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/model"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/usecase"
@@ -16,8 +15,7 @@ import (
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTask) (*model.Task, error) {
 	inputData := usecase.NewCreateTaskInput(input.Title, input.Content, input.UserID)
-	taskDao := dao.NewTaskDao()
-	interactor := usecase.NewCreateTaskUsecase(inputData, *taskDao)
+	interactor := usecase.NewCreateTaskUsecase(inputData)
 	output, err := interactor.Handler()
 	if err != nil {
 		return nil, err
