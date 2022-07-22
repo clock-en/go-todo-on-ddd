@@ -14,7 +14,17 @@ import (
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTask) (*model.Task, error) {
 	taskController := controller.TaskController{}
-	return taskController.Create(input.Title, input.Content, input.UserID)
+	viewModel, err := taskController.Create(input.Title, input.Content, input.UserID)
+	if err != nil {
+		return nil, err
+	}
+	dataModel := &model.Task{
+		ID:      viewModel.ID(),
+		Title:   viewModel.Title(),
+		Content: viewModel.Content(),
+		UserID:  viewModel.UserID(),
+	}
+	return dataModel, nil
 }
 
 // Task is the resolver for the task field.
