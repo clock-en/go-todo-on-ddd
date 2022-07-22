@@ -6,7 +6,6 @@ type Task {
 }
 
 input CreateTask {
-    id: ID!
     title: String!
     content: String!
     userID: ID!

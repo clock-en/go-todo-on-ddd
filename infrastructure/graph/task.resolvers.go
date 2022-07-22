@@ -7,35 +7,26 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
-	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/dao"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/generated"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/model"
-	"github.com/google/uuid"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/usecase"
 )
 
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTask) (*model.Task, error) {
-	generatedID, _ := uuid.NewRandom()
-	id, err := vo.NewID(generatedID.String())
-	title, err := vo.NewTaskTitle(input.Title)
-	content, err := vo.NewTaskContent(input.Content)
-	userID, err := vo.NewID(input.UserID)
-
-	taskEntity := entity.NewTask(*id, *title, *content, *userID)
-
+	inputData := usecase.NewCreateTaskInput(input.Title, input.Content, input.UserID)
 	taskDao := dao.NewTaskDao()
-	defer taskDao.Close()
-	task, err := taskDao.CreateTask(*taskEntity)
+	interactor := usecase.NewCreateTaskUsecase(inputData, *taskDao)
+	output, err := interactor.Handler()
 	if err != nil {
 		return nil, err
 	}
 	taskDataModel := &model.Task{
-		ID:      task.ID().Value(),
-		Title:   task.Title().Value(),
-		Content: task.Content().Value(),
-		UserID:  task.UserID().Value(),
+		ID:      output.Task().ID().Value(),
+		Title:   output.Task().Title().Value(),
+		Content: output.Task().Content().Value(),
+		UserID:  output.Task().UserID().Value(),
 	}
 
 	return taskDataModel, nil
