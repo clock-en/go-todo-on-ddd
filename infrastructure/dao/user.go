@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -9,10 +8,10 @@ type UserDao struct {
 	handler *sqlHandler
 }
 
-func (t UserDao) CreateUser(user entity.User) (entity.User, error) {
+func (t UserDao) CreateUser(name string, email string, password string) error {
 	const sql = "INSERT INTO users (name,email,password) VALUES (?, ?, ?);"
-	_, err := t.handler.connect.Exec(sql, user.Name(), user.Email())
-	return user, err
+	_, err := t.handler.connect.Exec(sql, name, email, password)
+	return err
 }
 
 func (t UserDao) Close() {

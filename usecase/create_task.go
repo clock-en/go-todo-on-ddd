@@ -1,52 +1,73 @@
 package usecase
 
 import (
-	"github.com/clock-en/go-todo-on-ddd-on-ddd/adapter/repository"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
 	"github.com/google/uuid"
 )
 
-type createTaskInput struct {
-	title   vo.TaskTitle
-	content vo.TaskContent
-	userID  vo.ID
+type createTaskInputData struct {
+	title   string
+	content string
+	userID  string
 }
 
-func NewCreateTaskInput(title string, content string, userID string) createTaskInput {
-	t, _ := vo.NewTaskTitle(title)
-	c, _ := vo.NewTaskContent(content)
-	u, _ := vo.NewID(userID)
-	return createTaskInput{title: *t, content: *c, userID: *u}
+func NewCreateTaskInputData(title string, content string, userID string) createTaskInputData {
+	return createTaskInputData{title: title, content: content, userID: userID}
 }
 
-type CreateTaskOutput struct {
-	task entity.Task
+type createTaskOutputData struct {
+	id      string
+	title   string
+	content string
+	userID  string
 }
 
-func (o CreateTaskOutput) Task() entity.Task {
-	return o.task
+func (o createTaskOutputData) ID() string {
+	return o.id
+}
+func (o createTaskOutputData) Title() string {
+	return o.title
+}
+func (o createTaskOutputData) Content() string {
+	return o.content
+}
+func (o createTaskOutputData) UserID() string {
+	return o.userID
 }
 
 type createTaskInteractor struct {
-	input          createTaskInput
-	taskRepository repository.TaskRepository
+	input          createTaskInputData
+	taskRepository ITaskRepository
 }
 
-func NewCreateTaskUsecase(input createTaskInput) *createTaskInteractor {
-	return &createTaskInteractor{input: input, taskRepository: repository.TaskRepository{}}
+func NewCreateTaskUsecase(input createTaskInputData, taskRepository ITaskRepository) *createTaskInteractor {
+	return &createTaskInteractor{input: input, taskRepository: taskRepository}
 }
 
-func (i createTaskInteractor) Handler() (*CreateTaskOutput, error) {
+func (i createTaskInteractor) Handle() (*createTaskOutputData, error) {
 	generatedID, _ := uuid.NewRandom()
-	id, err := vo.NewID(generatedID.String())
-	if err != nil {
-		return nil, err
-	}
-	task := entity.NewTask(*id, i.input.title, i.input.content, i.input.userID)
-	dberror := i.taskRepository.Create(*task)
+	id, _ := vo.NewID(generatedID.String())
+	title, _ := vo.NewTaskTitle(i.input.title)
+	content, _ := vo.NewTaskContent(i.input.content)
+	userID, _ := vo.NewID(i.input.userID)
+	task := entity.NewTask(*id, *title, *content, *userID)
+
+	dberror := i.taskRepository.Create(
+		task.ID().Value(),
+		task.Title().Value(),
+		task.Content().Value(),
+		task.UserID().Value(),
+	)
 	if dberror != nil {
 		return nil, dberror
 	}
-	return &CreateTaskOutput{task: *task}, nil
+
+	output := &createTaskOutputData{
+		id:      task.ID().Value(),
+		title:   task.Title().Value(),
+		content: task.Content().Value(),
+		userID:  task.UserID().Value(),
+	}
+	return output, nil
 }
