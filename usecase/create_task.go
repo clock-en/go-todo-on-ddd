@@ -1,9 +1,9 @@
 package usecase
 
 import (
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/adapter/repository"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
-	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/dao"
 	"github.com/google/uuid"
 )
 
@@ -29,23 +29,24 @@ func (o CreateTaskOutput) Task() entity.Task {
 }
 
 type createTaskInteractor struct {
-	input createTaskInput
-	dao   dao.TaskDao
+	input          createTaskInput
+	taskRepository repository.TaskRepository
 }
 
-func NewCreateTaskUsecase(input createTaskInput, dao dao.TaskDao) *createTaskInteractor {
-	return &createTaskInteractor{input: input, dao: dao}
+func NewCreateTaskUsecase(input createTaskInput) *createTaskInteractor {
+	return &createTaskInteractor{input: input, taskRepository: repository.TaskRepository{}}
 }
 
 func (i createTaskInteractor) Handler() (*CreateTaskOutput, error) {
 	generatedID, _ := uuid.NewRandom()
 	id, err := vo.NewID(generatedID.String())
-	taskEntity := entity.NewTask(*id, i.input.title, i.input.content, i.input.userID)
-
-	defer i.dao.Close()
-	task, err := i.dao.CreateTask(*taskEntity)
 	if err != nil {
 		return nil, err
 	}
-	return &CreateTaskOutput{task: task}, nil
+	task := entity.NewTask(*id, i.input.title, i.input.content, i.input.userID)
+	dberror := i.taskRepository.Create(*task)
+	if dberror != nil {
+		return nil, dberror
+	}
+	return &CreateTaskOutput{task: *task}, nil
 }
