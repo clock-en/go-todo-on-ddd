@@ -5,13 +5,13 @@ import (
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/usecase"
 )
 
-type taskController struct{}
+type TaskController struct{}
 
-func (c taskController) create(title string, content string, userID string) (model.Task, error) {
+func (c TaskController) Create(title string, content string, userID string) (*model.Task, error) {
 	inputData := usecase.NewCreateTaskInput(title, content, userID)
 	interactor := usecase.NewCreateTaskUsecase(inputData)
 	output, err := interactor.Handler()
-	taskDataModel := model.Task{
+	taskDataModel := &model.Task{
 		ID:      output.Task().ID().Value(),
 		Title:   output.Task().Title().Value(),
 		Content: output.Task().Content().Value(),
