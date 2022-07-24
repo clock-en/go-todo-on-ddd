@@ -29,7 +29,7 @@ type TaskController struct{}
 
 func (c TaskController) Create(title string, content string, userID string) (*taskCreateViewModel, error) {
 	input := usecase.NewCreateTaskInputData(title, content, userID)
-	taskRepository := repository.TaskRepository{}
+	taskRepository := repository.NewTaskRepository()
 	interactor := usecase.NewCreateTaskUsecase(input, taskRepository)
 	output, err := interactor.Handle()
 	taskViewModel := &taskCreateViewModel{
