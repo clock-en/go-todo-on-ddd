@@ -41,7 +41,7 @@ type createTaskInteractor struct {
 	taskRepository ITaskRepository
 }
 
-func NewCreateTaskUsecase(input createTaskInputData, taskRepository ITaskRepository) *createTaskInteractor {
+func NewCreateTaskInteractor(input createTaskInputData, taskRepository ITaskRepository) *createTaskInteractor {
 	return &createTaskInteractor{input: input, taskRepository: taskRepository}
 }
 

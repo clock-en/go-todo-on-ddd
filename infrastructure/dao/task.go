@@ -5,10 +5,12 @@ import (
 )
 
 type taskRow struct {
-	id      string
-	title   string
-	content string
-	userID  string
+	id        string
+	title     string
+	content   string
+	userID    string
+	createdAt string
+	updatedAt string
 }
 
 func (r taskRow) ID() string {
@@ -28,7 +30,7 @@ type TaskDao struct {
 	handler *sqlHandler
 }
 
-func (t TaskDao) Create(id string, title string, content string, userID string) error {
+func (TaskDao) Create(id string, title string, content string, userID string) error {
 	handler := newSqlHandler()
 	defer handler.connect.Close()
 	const sql = "INSERT INTO tasks (id, title, content, user_id) VALUES (?, ?, ?, ?);"
@@ -36,15 +38,14 @@ func (t TaskDao) Create(id string, title string, content string, userID string) 
 	return err
 }
 
-func (t TaskDao) FindById(taskID string) (*taskRow, error) {
+func (TaskDao) FindById(taskID string) (*taskRow, error) {
 	handler := newSqlHandler()
 	defer handler.connect.Close()
-	const sql = "SELECT * FROM tasks WHERE id=?;"
-	row := handler.connect.QueryRow(sql, taskID)
-	if row.Err() != nil {
-		return nil, row.Err()
-	}
-	var id, title, content, userID string
-	row.Scan(&id, &title, &content, &userID)
-	return &taskRow{id, title, content, userID}, nil
+
+	task := &taskRow{}
+	const stmt = "SELECT * FROM tasks WHERE id=?;"
+	row := handler.connect.QueryRow(stmt, taskID)
+	err := row.Scan(&task.id, &task.title, &task.content, &task.userID, &task.createdAt, &task.updatedAt)
+
+	return task, err
 }

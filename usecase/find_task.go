@@ -37,8 +37,8 @@ type findTaskInteractor struct {
 	taskRepository ITaskRepository
 }
 
-func NewFindTaskInteractor(input createTaskInputData, taskRepository ITaskRepository) *createTaskInteractor {
-	return &createTaskInteractor{input: input, taskRepository: taskRepository}
+func NewFindTaskInteractor(input findTaskInputData, taskRepository ITaskRepository) *findTaskInteractor {
+	return &findTaskInteractor{input: input, taskRepository: taskRepository}
 }
 
 func (i findTaskInteractor) Handle() (*findTaskOutputData, error) {

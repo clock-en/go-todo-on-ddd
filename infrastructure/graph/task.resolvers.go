@@ -5,16 +5,16 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/adapter/controller"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/generated"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/model"
 )
 
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTask) (*model.Task, error) {
 	taskController := controller.TaskController{}
-	viewModel, err := taskController.Create(input.Title, input.Content, input.UserID)
+	viewModel, err := taskController.CreateTask(input.Title, input.Content, input.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -29,10 +29,31 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTas
 
 // Task is the resolver for the task field.
 func (r *queryResolver) Task(ctx context.Context, id string) (*model.Task, error) {
-	panic(fmt.Errorf("not implemented"))
+	taskController := controller.TaskController{}
+	viewModel, err := taskController.FindTask(id)
+	if err != nil {
+		return nil, err
+	}
+
+	dataModel := &model.Task{
+		ID:      viewModel.ID(),
+		Title:   viewModel.Title(),
+		Content: viewModel.Content(),
+		UserID:  viewModel.UserID(),
+	}
+	return dataModel, nil
 }
 
 // Tasks is the resolver for the tasks field.
 func (r *queryResolver) Tasks(ctx context.Context) ([]*model.Task, error) {
 	return r.tasks, nil
 }
+
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+
+// Query returns generated.QueryResolver implementation.
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
+
+type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
