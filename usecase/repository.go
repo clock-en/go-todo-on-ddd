@@ -1,13 +1,11 @@
 package usecase
 
-type ITaskRow interface {
-	ID() string
-	Title() string
-	Content() string
-	UserID() string
-}
+import (
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
+)
 
 type ITaskRepository interface {
-	Create(id string, title string, content string, userID string) error
-	FindById(id string) (ITaskRow, error)
+	Create(entity.Task) (*entity.Task, error)
+	FindById(id vo.ID) (*entity.Task, error)
 }

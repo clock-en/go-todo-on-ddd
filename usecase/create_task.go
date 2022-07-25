@@ -6,6 +6,37 @@ import (
 	"github.com/google/uuid"
 )
 
+type createTaskInteractor struct {
+	input          createTaskInputData
+	taskRepository ITaskRepository
+}
+
+func NewCreateTaskInteractor(input createTaskInputData, taskRepository ITaskRepository) *createTaskInteractor {
+	return &createTaskInteractor{input: input, taskRepository: taskRepository}
+}
+
+func (i createTaskInteractor) Handle() (*createTaskOutputData, error) {
+	generatedID, _ := uuid.NewRandom()
+	id, _ := vo.NewID(generatedID.String())
+	title, _ := vo.NewTaskTitle(i.input.title)
+	content, _ := vo.NewTaskContent(i.input.content)
+	userID, _ := vo.NewID(i.input.userID)
+	newTask := entity.NewTask(*id, *title, *content, *userID)
+
+	task, dberror := i.taskRepository.Create(*newTask)
+	if dberror != nil {
+		return nil, dberror
+	}
+
+	output := &createTaskOutputData{
+		id:      task.ID().Value(),
+		title:   task.Title().Value(),
+		content: task.Content().Value(),
+		userID:  task.UserID().Value(),
+	}
+	return output, nil
+}
+
 type createTaskInputData struct {
 	title   string
 	content string
@@ -34,40 +65,4 @@ func (o createTaskOutputData) Content() string {
 }
 func (o createTaskOutputData) UserID() string {
 	return o.userID
-}
-
-type createTaskInteractor struct {
-	input          createTaskInputData
-	taskRepository ITaskRepository
-}
-
-func NewCreateTaskInteractor(input createTaskInputData, taskRepository ITaskRepository) *createTaskInteractor {
-	return &createTaskInteractor{input: input, taskRepository: taskRepository}
-}
-
-func (i createTaskInteractor) Handle() (*createTaskOutputData, error) {
-	generatedID, _ := uuid.NewRandom()
-	id, _ := vo.NewID(generatedID.String())
-	title, _ := vo.NewTaskTitle(i.input.title)
-	content, _ := vo.NewTaskContent(i.input.content)
-	userID, _ := vo.NewID(i.input.userID)
-	task := entity.NewTask(*id, *title, *content, *userID)
-
-	dberror := i.taskRepository.Create(
-		task.ID().Value(),
-		task.Title().Value(),
-		task.Content().Value(),
-		task.UserID().Value(),
-	)
-	if dberror != nil {
-		return nil, dberror
-	}
-
-	output := &createTaskOutputData{
-		id:      task.ID().Value(),
-		title:   task.Title().Value(),
-		content: task.Content().Value(),
-		userID:  task.UserID().Value(),
-	}
-	return output, nil
 }

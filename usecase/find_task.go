@@ -4,6 +4,32 @@ import (
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
 )
 
+type findTaskInteractor struct {
+	input          findTaskInputData
+	taskRepository ITaskRepository
+}
+
+func NewFindTaskInteractor(input findTaskInputData, taskRepository ITaskRepository) *findTaskInteractor {
+	return &findTaskInteractor{input: input, taskRepository: taskRepository}
+}
+
+func (i findTaskInteractor) Handle() (*findTaskOutputData, error) {
+	id, _ := vo.NewID(i.input.id)
+
+	task, dberror := i.taskRepository.FindById(*id)
+	if dberror != nil {
+		return nil, dberror
+	}
+
+	output := &findTaskOutputData{
+		id:      task.ID().Value(),
+		title:   task.Title().Value(),
+		content: task.Content().Value(),
+		userID:  task.UserID().Value(),
+	}
+	return output, nil
+}
+
 type findTaskInputData struct {
 	id string
 }
@@ -30,30 +56,4 @@ func (o findTaskOutputData) Content() string {
 }
 func (o findTaskOutputData) UserID() string {
 	return o.userID
-}
-
-type findTaskInteractor struct {
-	input          findTaskInputData
-	taskRepository ITaskRepository
-}
-
-func NewFindTaskInteractor(input findTaskInputData, taskRepository ITaskRepository) *findTaskInteractor {
-	return &findTaskInteractor{input: input, taskRepository: taskRepository}
-}
-
-func (i findTaskInteractor) Handle() (*findTaskOutputData, error) {
-	id, _ := vo.NewID(i.input.id)
-
-	task, dberror := i.taskRepository.FindById(id.Value())
-	if dberror != nil {
-		return nil, dberror
-	}
-
-	output := &findTaskOutputData{
-		id:      task.ID(),
-		title:   task.Title(),
-		content: task.Content(),
-		userID:  task.UserID(),
-	}
-	return output, nil
 }
