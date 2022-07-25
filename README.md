@@ -38,13 +38,12 @@
   - service (Domain Service) : DDD におけるドメインサービスを実装
 - usecase : Application Business Rules
   - 各ユースケースファイル : 機能別のユースケースを実装
+  - dto : 各ユースケースの InputData と OutputData を定義
 - adapter : Interface Adapters
-  - controller : Webインフラとの接続処理を実装
-  - repository : DBインフラとの接続処理 (Read以外) を実装
-  - query (Query Service) : DBインフラとの接続処理 (Readのみ) を実装
+  - controller : usecase と graph の中間処理を実装
+  - repository : usecase と dao の中間処理を実装
 - infrastructure : Frameworks & Drivers
-  - dao (Data Access Object) : MySQL とのやりとりを実装
-  - graph (GraphQL Server by gqlgen) : GraphQL サーバーとのやりとりを実装
+  - graph (GraphQL Server by gqlgen) : Webインフラとの接続処理を実装
+  - dao (Data Access Object) : DBインフラとの接続処理を実装
 
-基本的に依存方向は 同じレイヤー内 または 下位レイヤー -> 上位レイヤーとなるように実装をする。<br>
-※ 現在 Repository が上位レイヤーのDaoに依存しているため、今後の検討がさらに必要
+基本的に依存方向は 同じレイヤー内 または 下位レイヤー -> 上位レイヤーとなるように実装をする。
