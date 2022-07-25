@@ -13,7 +13,7 @@ input CreateTask {
 
 extend type Query {
     task(id: ID!): Task!
-    tasks: [Task!]!
+    tasks(userID: ID!): [Task!]!
 }
 
 extend type Mutation {

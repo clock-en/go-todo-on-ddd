@@ -45,8 +45,24 @@ func (r *queryResolver) Task(ctx context.Context, id string) (*model.Task, error
 }
 
 // Tasks is the resolver for the tasks field.
-func (r *queryResolver) Tasks(ctx context.Context) ([]*model.Task, error) {
-	return r.tasks, nil
+func (r *queryResolver) Tasks(ctx context.Context, userID string) ([]*model.Task, error) {
+	taskController := controller.TaskController{}
+	viewModel, err := taskController.FetchUserTasks(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	dataModel := []*model.Task{}
+	for _, task := range viewModel {
+		dataModel = append(dataModel, &model.Task{
+			ID:      task.ID(),
+			Title:   task.Title(),
+			Content: task.Content(),
+			UserID:  task.UserID(),
+		})
+	}
+
+	return dataModel, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

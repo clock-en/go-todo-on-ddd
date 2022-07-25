@@ -55,3 +55,20 @@ func (c TaskController) FindTask(id string) (*taskViewModel, error) {
 	}
 	return viewModel, err
 }
+
+func (c TaskController) FetchUserTasks(userID string) ([]taskViewModel, error) {
+	input := dto.NewFetchTasksInputData(userID)
+	taskRepository := repository.NewTaskRepository()
+	interactor := usecase.NewFetchTasksInteractor(input, taskRepository)
+	output, err := interactor.Handle()
+	viewModel := []taskViewModel{}
+	for _, task := range output.Tasks() {
+		viewModel = append(viewModel, taskViewModel{
+			id:      task.ID(),
+			title:   task.Title(),
+			content: task.Content(),
+			userID:  task.UserID(),
+		})
+	}
+	return viewModel, err
+}

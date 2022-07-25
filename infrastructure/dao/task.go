@@ -63,7 +63,7 @@ func (TaskDao) FetchTasksByUserID(userID string) ([]taskRow, error) {
 	defer rows.Close()
 	for rows.Next() {
 		task := taskRow{}
-		if err := rows.Scan(&task.id, &task.title, &task.content, &task.userID); err != nil {
+		if err := rows.Scan(&task.id, &task.title, &task.content, &task.userID, &task.createdAt, &task.updatedAt); err != nil {
 			panic(err)
 		}
 		tasks = append(tasks, task)
