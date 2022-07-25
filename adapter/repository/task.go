@@ -12,9 +12,9 @@ func NewTaskRepository() taskRepository {
 	return taskRepository{}
 }
 
-func (r taskRepository) Create(task entity.Task) (*entity.Task, error) {
+func (r taskRepository) CreateTask(task entity.Task) (*entity.Task, error) {
 	dao := dao.TaskDao{}
-	err := dao.Create(
+	err := dao.CreateTask(
 		task.ID().Value(),
 		task.Title().Value(),
 		task.Content().Value(),
@@ -26,14 +26,27 @@ func (r taskRepository) Create(task entity.Task) (*entity.Task, error) {
 	return &task, nil
 }
 
-func (q taskRepository) FindById(id vo.ID) (*entity.Task, error) {
+func (q taskRepository) FindTaskByID(id vo.ID) (*entity.Task, error) {
 	dao := dao.TaskDao{}
-	row, err := dao.FindById(id.Value())
+	row, err := dao.FindTaskByID(id.Value())
 	if err != nil {
 		return nil, err
 	}
-	task := taskFactory(row)
+	task := createTaskEntity(row)
 	return &task, nil
+}
+
+func (q taskRepository) FetchTasksByUserID(userID vo.ID) ([]entity.Task, error) {
+	dao := dao.TaskDao{}
+	rows, err := dao.FetchTasksByUserID(userID.Value())
+	if err != nil {
+		return nil, err
+	}
+	tasks := []entity.Task{}
+	for _, row := range rows {
+		tasks = append(tasks, createTaskEntity(row))
+	}
+	return tasks, nil
 }
 
 type ITaskRow interface {
@@ -44,15 +57,16 @@ type ITaskRow interface {
 }
 
 type ITaskDao interface {
-	Create(id string, title string, content string, userID string) error
-	FindById(id string) (ITaskRow, error)
+	CreateTask(id string, title string, content string, userID string) error
+	FindTaskByID(id string) (ITaskRow, error)
+	FetchTasksByUserID(userID string) ([]ITaskRow, error)
 }
 
-func taskFactory(taskRow ITaskRow) entity.Task {
+func createTaskEntity(taskRow ITaskRow) entity.Task {
 	id, _ := vo.NewID(taskRow.ID())
-	title, _ := vo.NewTaskTitle(taskRow.ID())
-	content, _ := vo.NewTaskContent(taskRow.ID())
-	userID, _ := vo.NewID(taskRow.ID())
+	title, _ := vo.NewTaskTitle(taskRow.Title())
+	content, _ := vo.NewTaskContent(taskRow.Content())
+	userID, _ := vo.NewID(taskRow.UserID())
 	// TODO: voのエラー処理を実装
 	return *entity.NewTask(
 		*id,

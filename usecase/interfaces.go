@@ -6,6 +6,7 @@ import (
 )
 
 type ITaskRepository interface {
-	Create(entity.Task) (*entity.Task, error)
-	FindById(id vo.ID) (*entity.Task, error)
+	CreateTask(entity.Task) (*entity.Task, error)
+	FindTaskByID(id vo.ID) (*entity.Task, error)
+	FetchTasksByUserID(userID vo.ID) ([]entity.Task, error)
 }
