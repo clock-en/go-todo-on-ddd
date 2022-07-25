@@ -36,7 +36,7 @@ func (q taskRepository) FindTaskByID(id vo.ID) (*entity.Task, error) {
 	return &task, nil
 }
 
-func (q taskRepository) FetchTasksByUserID(userID vo.ID) ([]entity.Task, error) {
+func (q taskRepository) FetchTasksByUserID(userID vo.ID) (entity.Tasks, error) {
 	dao := dao.TaskDao{}
 	rows, err := dao.FetchTasksByUserID(userID.Value())
 	if err != nil {
