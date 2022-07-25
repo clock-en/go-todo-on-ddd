@@ -3,71 +3,32 @@ package usecase
 import (
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/usecase/dto"
 	"github.com/google/uuid"
 )
 
-type createTaskInputData struct {
-	title   string
-	content string
-	userID  string
-}
-
-func NewCreateTaskInputData(title string, content string, userID string) createTaskInputData {
-	return createTaskInputData{title: title, content: content, userID: userID}
-}
-
-type createTaskOutputData struct {
-	id      string
-	title   string
-	content string
-	userID  string
-}
-
-func (o createTaskOutputData) ID() string {
-	return o.id
-}
-func (o createTaskOutputData) Title() string {
-	return o.title
-}
-func (o createTaskOutputData) Content() string {
-	return o.content
-}
-func (o createTaskOutputData) UserID() string {
-	return o.userID
-}
-
 type createTaskInteractor struct {
-	input          createTaskInputData
+	input          dto.CreateTaskInputData
 	taskRepository ITaskRepository
 }
 
-func NewCreateTaskInteractor(input createTaskInputData, taskRepository ITaskRepository) *createTaskInteractor {
+func NewCreateTaskInteractor(input dto.CreateTaskInputData, taskRepository ITaskRepository) *createTaskInteractor {
 	return &createTaskInteractor{input: input, taskRepository: taskRepository}
 }
 
-func (i createTaskInteractor) Handle() (*createTaskOutputData, error) {
+func (i createTaskInteractor) Handle() (*dto.CreateTaskOutputData, error) {
 	generatedID, _ := uuid.NewRandom()
 	id, _ := vo.NewID(generatedID.String())
-	title, _ := vo.NewTaskTitle(i.input.title)
-	content, _ := vo.NewTaskContent(i.input.content)
-	userID, _ := vo.NewID(i.input.userID)
-	task := entity.NewTask(*id, *title, *content, *userID)
+	title, _ := vo.NewTaskTitle(i.input.Title())
+	content, _ := vo.NewTaskContent(i.input.Content())
+	userID, _ := vo.NewID(i.input.UserID())
+	newTask := entity.NewTask(*id, *title, *content, *userID)
 
-	dberror := i.taskRepository.Create(
-		task.ID().Value(),
-		task.Title().Value(),
-		task.Content().Value(),
-		task.UserID().Value(),
-	)
+	task, dberror := i.taskRepository.CreateTask(*newTask)
 	if dberror != nil {
 		return nil, dberror
 	}
 
-	output := &createTaskOutputData{
-		id:      task.ID().Value(),
-		title:   task.Title().Value(),
-		content: task.Content().Value(),
-		userID:  task.UserID().Value(),
-	}
+	output := dto.NewCreateTaskOutputData(*task)
 	return output, nil
 }

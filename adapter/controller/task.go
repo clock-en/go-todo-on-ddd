@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/adapter/repository"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/usecase"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/usecase/dto"
 )
 
 type taskViewModel struct {
@@ -28,29 +29,46 @@ func (v taskViewModel) UserID() string {
 type TaskController struct{}
 
 func (c TaskController) CreateTask(title string, content string, userID string) (*taskViewModel, error) {
-	input := usecase.NewCreateTaskInputData(title, content, userID)
+	input := dto.NewCreateTaskInputData(title, content, userID)
 	taskRepository := repository.NewTaskRepository()
 	interactor := usecase.NewCreateTaskInteractor(input, taskRepository)
 	output, err := interactor.Handle()
 	viewModel := &taskViewModel{
-		id:      output.ID(),
-		title:   output.Title(),
-		content: output.Content(),
-		userID:  output.UserID(),
+		id:      output.Task().ID(),
+		title:   output.Task().Title(),
+		content: output.Task().Content(),
+		userID:  output.Task().UserID(),
 	}
 	return viewModel, err
 }
 
 func (c TaskController) FindTask(id string) (*taskViewModel, error) {
-	input := usecase.NewFindTaskInputData(id)
+	input := dto.NewFindTaskInputData(id)
 	taskRepository := repository.NewTaskRepository()
 	interactor := usecase.NewFindTaskInteractor(input, taskRepository)
 	output, err := interactor.Handle()
 	viewModel := &taskViewModel{
-		id:      output.ID(),
-		title:   output.Title(),
-		content: output.Content(),
-		userID:  output.UserID(),
+		id:      output.Task().ID(),
+		title:   output.Task().Title(),
+		content: output.Task().Content(),
+		userID:  output.Task().UserID(),
+	}
+	return viewModel, err
+}
+
+func (c TaskController) FetchUserTasks(userID string) ([]taskViewModel, error) {
+	input := dto.NewFetchTasksInputData(userID)
+	taskRepository := repository.NewTaskRepository()
+	interactor := usecase.NewFetchTasksInteractor(input, taskRepository)
+	output, err := interactor.Handle()
+	viewModel := []taskViewModel{}
+	for _, task := range output.Tasks() {
+		viewModel = append(viewModel, taskViewModel{
+			id:      task.ID(),
+			title:   task.Title(),
+			content: task.Content(),
+			userID:  task.UserID(),
+		})
 	}
 	return viewModel, err
 }

@@ -30,7 +30,7 @@ type TaskDao struct {
 	handler *sqlHandler
 }
 
-func (TaskDao) Create(id string, title string, content string, userID string) error {
+func (TaskDao) CreateTask(id string, title string, content string, userID string) error {
 	handler := newSqlHandler()
 	defer handler.connect.Close()
 	const sql = "INSERT INTO tasks (id, title, content, user_id) VALUES (?, ?, ?, ?);"
@@ -38,14 +38,36 @@ func (TaskDao) Create(id string, title string, content string, userID string) er
 	return err
 }
 
-func (TaskDao) FindById(taskID string) (*taskRow, error) {
+func (TaskDao) FindTaskByID(id string) (*taskRow, error) {
 	handler := newSqlHandler()
 	defer handler.connect.Close()
 
 	task := &taskRow{}
 	const stmt = "SELECT * FROM tasks WHERE id=?;"
-	row := handler.connect.QueryRow(stmt, taskID)
+	row := handler.connect.QueryRow(stmt, id)
 	err := row.Scan(&task.id, &task.title, &task.content, &task.userID, &task.createdAt, &task.updatedAt)
 
 	return task, err
+}
+
+func (TaskDao) FetchTasksByUserID(userID string) ([]taskRow, error) {
+	handler := newSqlHandler()
+	defer handler.connect.Close()
+
+	tasks := []taskRow{}
+	const stmt = "SELECT * FROM tasks WHERE user_id=?;"
+	rows, err := handler.connect.Query(stmt, userID)
+	if err != nil {
+		return tasks, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		task := taskRow{}
+		if err := rows.Scan(&task.id, &task.title, &task.content, &task.userID, &task.createdAt, &task.updatedAt); err != nil {
+			panic(err)
+		}
+		tasks = append(tasks, task)
+	}
+
+	return tasks, err
 }
