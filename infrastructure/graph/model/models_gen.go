@@ -2,6 +2,10 @@
 
 package model
 
+type Node interface {
+	IsNode()
+}
+
 type CreateTask struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
@@ -21,8 +25,12 @@ type Task struct {
 	UserID  string `json:"userID"`
 }
 
+func (Task) IsNode() {}
+
 type User struct {
 	ID    string `json:"id"`
 	Name  string `json:"name"`
 	Email string `json:"email"`
 }
+
+func (User) IsNode() {}

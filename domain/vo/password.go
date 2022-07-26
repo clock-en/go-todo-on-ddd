@@ -57,5 +57,5 @@ func isInvalidPatternPassword(value string) bool {
 }
 
 func isInvalidLengthPassword(value string) bool {
-	return 254 < len(value)
+	return len(value) < 8 || 100 < len(value)
 }

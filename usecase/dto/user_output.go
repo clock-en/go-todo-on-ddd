@@ -3,16 +3,27 @@ package dto
 import "github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
 
 type RegisterUserOutputData struct {
-	user userData
+	user        *userData
+	inputErrors InputErrors
 }
 
-func NewRegisterUserOutputData(user entity.AuthUser) *RegisterUserOutputData {
+func NewRegisterUserOutputData(user *entity.AuthUser, inputErrors InputErrors) *RegisterUserOutputData {
+	if user == nil {
+		return &RegisterUserOutputData{
+			user:        nil,
+			inputErrors: inputErrors,
+		}
+	}
 	return &RegisterUserOutputData{
-		user: createUserData(user),
+		user:        createUserData(user),
+		inputErrors: inputErrors,
 	}
 }
 func (o RegisterUserOutputData) User() userData {
-	return o.user
+	return *o.user
+}
+func (o RegisterUserOutputData) InputErrors() InputErrors {
+	return o.inputErrors
 }
 
 type userData struct {
@@ -30,8 +41,8 @@ func (u userData) Name() string {
 func (u userData) Email() string {
 	return u.email
 }
-func createUserData(user entity.AuthUser) userData {
-	return userData{
+func createUserData(user *entity.AuthUser) *userData {
+	return &userData{
 		id:    user.ID().Value(),
 		name:  user.Name().Value(),
 		email: user.Email().Value(),

@@ -14,13 +14,24 @@ func (t UserDao) CreateUser(id string, name string, email string, password strin
 	_, err := handler.connect.Exec(stmt, id, name, email, password)
 	return err
 }
-func (UserDao) FindRegisteredUser(name string, email string) (repository.IUserRow, error) {
+func (UserDao) FindUserByName(name string) (repository.IUserRow, error) {
 	handler := newSqlHandler()
 	defer handler.connect.Close()
 
 	user := &userRow{}
-	const stmt = "SELECT * FROM users WHERE name=? OR email=?;"
-	row := handler.connect.QueryRow(stmt, name, email)
+	const stmt = "SELECT * FROM users WHERE name=?;"
+	row := handler.connect.QueryRow(stmt, name)
+	err := row.Scan(&user.id, &user.name, &user.email, &user.password, &user.createdAt, &user.updatedAt)
+
+	return user, err
+}
+func (UserDao) FindUserByEmail(email string) (repository.IUserRow, error) {
+	handler := newSqlHandler()
+	defer handler.connect.Close()
+
+	user := &userRow{}
+	const stmt = "SELECT * FROM users WHERE email=?;"
+	row := handler.connect.QueryRow(stmt, email)
 	err := row.Scan(&user.id, &user.name, &user.email, &user.password, &user.createdAt, &user.updatedAt)
 
 	return user, err

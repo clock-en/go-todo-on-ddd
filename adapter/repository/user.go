@@ -26,8 +26,17 @@ func (r userRepository) CreateUser(user entity.User) (*entity.AuthUser, error) {
 	authUser := entity.NewAuthUser(user.ID(), user.Name(), user.Email())
 	return authUser, nil
 }
-func (r userRepository) FindRegisteredUser(name vo.UserName, email vo.Email) (*entity.AuthUser, error) {
-	row, err := r.dao.FindRegisteredUser(name.Value(), email.Value())
+func (r userRepository) FindUserByName(name vo.UserName) (*entity.AuthUser, error) {
+	row, err := r.dao.FindUserByName(name.Value())
+	if err != nil {
+		return nil, err
+	}
+	authUser := createAuthUserEntity(row)
+	return &authUser, nil
+}
+
+func (r userRepository) FindUserByEmail(email vo.Email) (*entity.AuthUser, error) {
+	row, err := r.dao.FindUserByEmail(email.Value())
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +53,8 @@ type IUserRow interface {
 
 type IUserDao interface {
 	CreateUser(id string, name string, email string, hash string) error
-	FindRegisteredUser(name string, email string) (IUserRow, error)
+	FindUserByName(name string) (IUserRow, error)
+	FindUserByEmail(email string) (IUserRow, error)
 }
 
 func createAuthUserEntity(userRow IUserRow) entity.AuthUser {

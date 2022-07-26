@@ -13,17 +13,11 @@ type userController struct {
 func NewUserController(dao repository.IUserDao) userController {
 	return userController{dao: dao}
 }
-func (c userController) RegisterUser(name string, email string, password string) (*userViewModel, error) {
+func (c userController) RegisterUser(name string, email string, password string) (*dto.RegisterUserOutputData, error) {
 	input := dto.NewRegisterUserInputData(name, email, password)
 	userRepository := repository.NewUserRepository(c.dao)
 	interactor := usecase.NewRegisterUserInteractor(input, userRepository)
-	output, err := interactor.Handle()
-	viewModel := &userViewModel{
-		id:    output.User().ID(),
-		name:  output.User().Name(),
-		email: output.User().Email(),
-	}
-	return viewModel, err
+	return interactor.Handle()
 }
 
 type userViewModel struct {
