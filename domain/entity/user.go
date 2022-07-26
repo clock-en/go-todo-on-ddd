@@ -37,8 +37,8 @@ type AuthUser struct {
 	email vo.Email
 }
 
-func NewAuthUser(id vo.ID, name vo.UserName, email vo.Email) *User {
-	return &User{id: id, name: name, email: email}
+func NewAuthUser(id vo.ID, name vo.UserName, email vo.Email) *AuthUser {
+	return &AuthUser{id: id, name: name, email: email}
 }
 
 func (u AuthUser) ID() vo.ID {

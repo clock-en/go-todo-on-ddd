@@ -13,8 +13,9 @@ func NewUserService(userRepository repository.IUserRepository) userService {
 	return userService{userRepository: userRepository}
 }
 func (s userService) Exists(user entity.User) bool {
-	registeredUser, err := s.userRepository.FindByEmail(user.Email())
-	if err != nil || registeredUser != nil {
+	registeredUser, _ := s.userRepository.FindRegisteredUser(user.Name(), user.Email())
+
+	if registeredUser != nil {
 		return true
 	}
 	return false

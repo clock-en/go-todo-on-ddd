@@ -4,7 +4,7 @@ type User {
     email: String!
 }
 
-input CreateUser {
+input RegisterUser {
     name: String!
     email: String!
     password: String!
@@ -15,5 +15,5 @@ extend type Query {
 }
 
 extend type Mutation {
-    createUser(input: CreateUser!): User!
+    registerUser(input: RegisterUser!): User!
 }

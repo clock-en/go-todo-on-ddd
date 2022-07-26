@@ -11,7 +11,7 @@ func NewRegisterUserOutputData(user entity.AuthUser) *RegisterUserOutputData {
 		user: createUserData(user),
 	}
 }
-func (o RegisterUserOutputData) Task() userData {
+func (o RegisterUserOutputData) User() userData {
 	return o.user
 }
 

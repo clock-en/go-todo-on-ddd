@@ -7,13 +7,15 @@ import (
 	"context"
 
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/adapter/controller"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/dao"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/generated"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/model"
 )
 
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTask) (*model.Task, error) {
-	taskController := controller.TaskController{}
+	taskDao := &dao.TaskDao{}
+	taskController := controller.NewTaskController(taskDao)
 	viewModel, err := taskController.CreateTask(input.Title, input.Content, input.UserID)
 	if err != nil {
 		return nil, err
@@ -29,7 +31,8 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTas
 
 // Task is the resolver for the task field.
 func (r *queryResolver) Task(ctx context.Context, id string) (*model.Task, error) {
-	taskController := controller.TaskController{}
+	taskDao := &dao.TaskDao{}
+	taskController := controller.NewTaskController(taskDao)
 	viewModel, err := taskController.FindTask(id)
 	if err != nil {
 		return nil, err
@@ -46,7 +49,8 @@ func (r *queryResolver) Task(ctx context.Context, id string) (*model.Task, error
 
 // Tasks is the resolver for the tasks field.
 func (r *queryResolver) Tasks(ctx context.Context, userID string) ([]*model.Task, error) {
-	taskController := controller.TaskController{}
+	taskDao := &dao.TaskDao{}
+	taskController := controller.NewTaskController(taskDao)
 	viewModel, err := taskController.FetchUserTasks(userID)
 	if err != nil {
 		return nil, err
