@@ -24,7 +24,7 @@ func (n UserName) Value() string {
 }
 
 func isInvalidPatternUserName(value string) bool {
-	return regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString(value)
+	return !regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString(value)
 }
 
 func isInvalidLengthUserName(value string) bool {

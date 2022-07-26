@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/repository"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/usecase/dto"
 	"github.com/google/uuid"
@@ -9,10 +10,10 @@ import (
 
 type createTaskInteractor struct {
 	input          dto.CreateTaskInputData
-	taskRepository ITaskRepository
+	taskRepository repository.ITaskRepository
 }
 
-func NewCreateTaskInteractor(input dto.CreateTaskInputData, taskRepository ITaskRepository) *createTaskInteractor {
+func NewCreateTaskInteractor(input dto.CreateTaskInputData, taskRepository repository.ITaskRepository) *createTaskInteractor {
 	return &createTaskInteractor{input: input, taskRepository: taskRepository}
 }
 

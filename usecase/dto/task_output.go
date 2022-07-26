@@ -8,7 +8,7 @@ type CreateTaskOutputData struct {
 
 func NewCreateTaskOutputData(task entity.Task) *CreateTaskOutputData {
 	return &CreateTaskOutputData{
-		task: createtaskData(task),
+		task: createTaskData(task),
 	}
 }
 func (o CreateTaskOutputData) Task() taskData {
@@ -19,10 +19,10 @@ type FetchTasksOutputData struct {
 	tasks []taskData
 }
 
-func NewFetchTasksOutputData(tasks []entity.Task) *FetchTasksOutputData {
+func NewFetchTasksOutputData(tasks entity.Tasks) *FetchTasksOutputData {
 	slice := []taskData{}
 	for _, task := range tasks {
-		slice = append(slice, createtaskData(task))
+		slice = append(slice, createTaskData(task))
 	}
 	return &FetchTasksOutputData{tasks: slice}
 }
@@ -36,7 +36,7 @@ type FindTaskOutputData struct {
 
 func NewFindTaskOutputData(task entity.Task) *FindTaskOutputData {
 	return &FindTaskOutputData{
-		task: createtaskData(task),
+		task: createTaskData(task),
 	}
 }
 func (o FindTaskOutputData) Task() taskData {
@@ -62,7 +62,7 @@ func (t taskData) Content() string {
 func (t taskData) UserID() string {
 	return t.userID
 }
-func createtaskData(task entity.Task) taskData {
+func createTaskData(task entity.Task) taskData {
 	return taskData{
 		task.ID().Value(),
 		task.Title().Value(),

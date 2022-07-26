@@ -1,16 +1,17 @@
 package usecase
 
 import (
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/repository"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/usecase/dto"
 )
 
 type findTaskInteractor struct {
 	input          dto.FindTaskInputData
-	taskRepository ITaskRepository
+	taskRepository repository.ITaskRepository
 }
 
-func NewFindTaskInteractor(input dto.FindTaskInputData, taskRepository ITaskRepository) *findTaskInteractor {
+func NewFindTaskInteractor(input dto.FindTaskInputData, taskRepository repository.ITaskRepository) *findTaskInteractor {
 	return &findTaskInteractor{input: input, taskRepository: taskRepository}
 }
 

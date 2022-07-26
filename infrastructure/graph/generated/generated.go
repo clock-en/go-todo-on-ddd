@@ -45,8 +45,8 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreateTask func(childComplexity int, input model.CreateTask) int
-		CreateUser func(childComplexity int, input model.CreateUser) int
+		CreateTask   func(childComplexity int, input model.CreateTask) int
+		RegisterUser func(childComplexity int, input model.RegisterUser) int
 	}
 
 	Query struct {
@@ -71,7 +71,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateTask(ctx context.Context, input model.CreateTask) (*model.Task, error)
-	CreateUser(ctx context.Context, input model.CreateUser) (*model.User, error)
+	RegisterUser(ctx context.Context, input model.RegisterUser) (*model.User, error)
 }
 type QueryResolver interface {
 	Task(ctx context.Context, id string) (*model.Task, error)
@@ -106,17 +106,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateTask(childComplexity, args["input"].(model.CreateTask)), true
 
-	case "Mutation.createUser":
-		if e.complexity.Mutation.CreateUser == nil {
+	case "Mutation.registerUser":
+		if e.complexity.Mutation.RegisterUser == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createUser_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_registerUser_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.CreateUser)), true
+		return e.complexity.Mutation.RegisterUser(childComplexity, args["input"].(model.RegisterUser)), true
 
 	case "Query.task":
 		if e.complexity.Query.Task == nil {
@@ -212,7 +212,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateTask,
-		ec.unmarshalInputCreateUser,
+		ec.unmarshalInputRegisterUser,
 	)
 	first := true
 
@@ -300,7 +300,7 @@ extend type Mutation {
     email: String!
 }
 
-input CreateUser {
+input RegisterUser {
     name: String!
     email: String!
     password: String!
@@ -311,7 +311,7 @@ extend type Query {
 }
 
 extend type Mutation {
-    createUser(input: CreateUser!): User!
+    registerUser(input: RegisterUser!): User!
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -335,13 +335,13 @@ func (ec *executionContext) field_Mutation_createTask_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_registerUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.CreateUser
+	var arg0 model.RegisterUser
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateUser2githubᚗcomᚋclockᚑenᚋgoᚑtodoᚑonᚑdddᚑonᚑdddᚋinfrastructureᚋgraphᚋmodelᚐCreateUser(ctx, tmp)
+		arg0, err = ec.unmarshalNRegisterUser2githubᚗcomᚋclockᚑenᚋgoᚑtodoᚑonᚑdddᚑonᚑdddᚋinfrastructureᚋgraphᚋmodelᚐRegisterUser(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -513,8 +513,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
+func (ec *executionContext) _Mutation_registerUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_registerUser(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -527,7 +527,7 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(model.CreateUser))
+		return ec.resolvers.Mutation().RegisterUser(rctx, fc.Args["input"].(model.RegisterUser))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -544,7 +544,7 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	return ec.marshalNUser2ᚖgithubᚗcomᚋclockᚑenᚋgoᚑtodoᚑonᚑdddᚑonᚑdddᚋinfrastructureᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_registerUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -569,7 +569,7 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_registerUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -3023,8 +3023,8 @@ func (ec *executionContext) unmarshalInputCreateTask(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateUser(ctx context.Context, obj interface{}) (model.CreateUser, error) {
-	var it model.CreateUser
+func (ec *executionContext) unmarshalInputRegisterUser(ctx context.Context, obj interface{}) (model.RegisterUser, error) {
+	var it model.RegisterUser
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -3103,10 +3103,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "createUser":
+		case "registerUser":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createUser(ctx, field)
+				return ec._Mutation_registerUser(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -3663,11 +3663,6 @@ func (ec *executionContext) unmarshalNCreateTask2githubᚗcomᚋclockᚑenᚋgo�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateUser2githubᚗcomᚋclockᚑenᚋgoᚑtodoᚑonᚑdddᚑonᚑdddᚋinfrastructureᚋgraphᚋmodelᚐCreateUser(ctx context.Context, v interface{}) (model.CreateUser, error) {
-	res, err := ec.unmarshalInputCreateUser(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3681,6 +3676,11 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNRegisterUser2githubᚗcomᚋclockᚑenᚋgoᚑtodoᚑonᚑdddᚑonᚑdddᚋinfrastructureᚋgraphᚋmodelᚐRegisterUser(ctx context.Context, v interface{}) (model.RegisterUser, error) {
+	res, err := ec.unmarshalInputRegisterUser(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

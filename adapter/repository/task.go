@@ -3,18 +3,18 @@ package repository
 import (
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
-	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/dao"
 )
 
-type taskRepository struct{}
+type taskRepository struct {
+	dao ITaskDao
+}
 
-func NewTaskRepository() taskRepository {
-	return taskRepository{}
+func NewTaskRepository(dao ITaskDao) taskRepository {
+	return taskRepository{dao: dao}
 }
 
 func (r taskRepository) CreateTask(task entity.Task) (*entity.Task, error) {
-	dao := dao.TaskDao{}
-	err := dao.CreateTask(
+	err := r.dao.CreateTask(
 		task.ID().Value(),
 		task.Title().Value(),
 		task.Content().Value(),
@@ -26,9 +26,8 @@ func (r taskRepository) CreateTask(task entity.Task) (*entity.Task, error) {
 	return &task, nil
 }
 
-func (q taskRepository) FindTaskByID(id vo.ID) (*entity.Task, error) {
-	dao := dao.TaskDao{}
-	row, err := dao.FindTaskByID(id.Value())
+func (r taskRepository) FindTaskByID(id vo.ID) (*entity.Task, error) {
+	row, err := r.dao.FindTaskByID(id.Value())
 	if err != nil {
 		return nil, err
 	}
@@ -36,9 +35,8 @@ func (q taskRepository) FindTaskByID(id vo.ID) (*entity.Task, error) {
 	return &task, nil
 }
 
-func (q taskRepository) FetchTasksByUserID(userID vo.ID) ([]entity.Task, error) {
-	dao := dao.TaskDao{}
-	rows, err := dao.FetchTasksByUserID(userID.Value())
+func (r taskRepository) FetchTasksByUserID(userID vo.ID) (entity.Tasks, error) {
+	rows, err := r.dao.FetchTasksByUserID(userID.Value())
 	if err != nil {
 		return nil, err
 	}
