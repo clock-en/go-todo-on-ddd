@@ -13,47 +13,23 @@ type taskController struct {
 func NewTaskController(dao repository.ITaskDao) taskController {
 	return taskController{dao: dao}
 }
-func (c taskController) CreateTask(title string, content string, userID string) (*taskViewModel, error) {
+func (c taskController) CreateTask(title string, content string, userID string) (*dto.CreateTaskOutputData, error) {
 	input := dto.NewCreateTaskInputData(title, content, userID)
 	taskRepository := repository.NewTaskRepository(c.dao)
 	interactor := usecase.NewCreateTaskInteractor(input, taskRepository)
-	output, err := interactor.Handle()
-	viewModel := &taskViewModel{
-		id:      output.Task().ID(),
-		title:   output.Task().Title(),
-		content: output.Task().Content(),
-		userID:  output.Task().UserID(),
-	}
-	return viewModel, err
+	return interactor.Handle()
 }
-func (c taskController) FindTask(id string) (*taskViewModel, error) {
+func (c taskController) FindTask(id string) (*dto.FindTaskOutputData, error) {
 	input := dto.NewFindTaskInputData(id)
 	taskRepository := repository.NewTaskRepository(c.dao)
 	interactor := usecase.NewFindTaskInteractor(input, taskRepository)
-	output, err := interactor.Handle()
-	viewModel := &taskViewModel{
-		id:      output.Task().ID(),
-		title:   output.Task().Title(),
-		content: output.Task().Content(),
-		userID:  output.Task().UserID(),
-	}
-	return viewModel, err
+	return interactor.Handle()
 }
-func (c taskController) FetchUserTasks(userID string) ([]taskViewModel, error) {
+func (c taskController) FetchUserTasks(userID string) (*dto.FetchTasksOutputData, error) {
 	input := dto.NewFetchTasksInputData(userID)
 	taskRepository := repository.NewTaskRepository(c.dao)
 	interactor := usecase.NewFetchTasksInteractor(input, taskRepository)
-	output, err := interactor.Handle()
-	viewModel := []taskViewModel{}
-	for _, task := range output.Tasks() {
-		viewModel = append(viewModel, taskViewModel{
-			id:      task.ID(),
-			title:   task.Title(),
-			content: task.Content(),
-			userID:  task.UserID(),
-		})
-	}
-	return viewModel, err
+	return interactor.Handle()
 }
 
 type taskViewModel struct {
