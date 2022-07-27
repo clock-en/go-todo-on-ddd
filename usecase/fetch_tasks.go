@@ -16,13 +16,20 @@ func NewFetchTasksInteractor(input dto.FetchTasksInputData, taskRepository repos
 }
 
 func (i fetchTasksInteractor) Handle() (*dto.FetchTasksOutputData, error) {
-	userID, _ := vo.NewID(i.input.UserID())
-
-	tasks, dberror := i.taskRepository.FetchTasksByUserID(*userID)
-	if dberror != nil {
-		return nil, dberror
+	inputErrors := dto.InputErrors{}
+	userID, err := vo.NewID(i.input.UserID())
+	if err != nil {
+		inputErrors["userID"] = err
 	}
 
-	output := dto.NewFetchTasksOutputData(tasks)
-	return output, nil
+	if len(inputErrors) > 0 {
+		return dto.NewFetchTasksOutputData(nil, inputErrors), nil
+	}
+
+	tasks, err := i.taskRepository.FetchTasksByUserID(*userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.NewFetchTasksOutputData(tasks, nil), nil
 }

@@ -13,17 +13,13 @@ func NewTaskRepository(dao ITaskDao) taskRepository {
 	return taskRepository{dao: dao}
 }
 
-func (r taskRepository) CreateTask(task entity.Task) (*entity.Task, error) {
-	err := r.dao.CreateTask(
+func (r taskRepository) CreateTask(task entity.Task) error {
+	return r.dao.CreateTask(
 		task.ID().Value(),
 		task.Title().Value(),
 		task.Content().Value(),
 		task.UserID().Value(),
 	)
-	if err != nil {
-		return nil, err
-	}
-	return &task, nil
 }
 
 func (r taskRepository) FindTaskByID(id vo.ID) (*entity.Task, error) {

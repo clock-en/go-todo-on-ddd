@@ -7,5 +7,6 @@ import (
 
 type IUserRepository interface {
 	CreateUser(user entity.User) (*entity.AuthUser, error)
-	FindRegisteredUser(name vo.UserName, email vo.Email) (*entity.AuthUser, error)
+	FindUserByName(name vo.UserName) (*entity.AuthUser, error)
+	FindUserByEmail(email vo.Email) (*entity.AuthUser, error)
 }

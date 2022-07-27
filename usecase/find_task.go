@@ -16,13 +16,20 @@ func NewFindTaskInteractor(input dto.FindTaskInputData, taskRepository repositor
 }
 
 func (i findTaskInteractor) Handle() (*dto.FindTaskOutputData, error) {
-	id, _ := vo.NewID(i.input.ID())
-
-	task, dberror := i.taskRepository.FindTaskByID(*id)
-	if dberror != nil {
-		return nil, dberror
+	inputErrors := dto.InputErrors{}
+	id, err := vo.NewID(i.input.ID())
+	if err != nil {
+		inputErrors["id"] = err
 	}
 
-	output := dto.NewFindTaskOutputData(*task)
-	return output, nil
+	if len(inputErrors) > 0 {
+		return dto.NewFindTaskOutputData(nil, inputErrors), nil
+	}
+
+	task, err := i.taskRepository.FindTaskByID(*id)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.NewFindTaskOutputData(task, nil), nil
 }

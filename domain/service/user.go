@@ -1,8 +1,10 @@
 package service
 
 import (
-	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
+	"fmt"
+
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/repository"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/vo"
 )
 
 type userService struct {
@@ -12,11 +14,19 @@ type userService struct {
 func NewUserService(userRepository repository.IUserRepository) userService {
 	return userService{userRepository: userRepository}
 }
-func (s userService) Exists(user entity.User) bool {
-	registeredUser, _ := s.userRepository.FindRegisteredUser(user.Name(), user.Email())
+func (s userService) ExistsName(name vo.UserName) error {
+	registeredUser, _ := s.userRepository.FindUserByName(name)
 
 	if registeredUser != nil {
-		return true
+		return fmt.Errorf("user name already exists")
 	}
-	return false
+	return nil
+}
+func (s userService) ExistsEmail(email vo.Email) error {
+	registeredUser, _ := s.userRepository.FindUserByEmail(email)
+
+	if registeredUser != nil {
+		return fmt.Errorf("email already exists")
+	}
+	return nil
 }

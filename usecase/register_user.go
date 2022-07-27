@@ -1,8 +1,6 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/entity"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/repository"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/domain/service"
@@ -23,23 +21,47 @@ func NewRegisterUserInteractor(
 	return &registerUserInteractor{input: input, userRepository: userRepository}
 }
 func (i registerUserInteractor) Handle() (*dto.RegisterUserOutputData, error) {
+	name, email, password, inputErrors := i.validateInputs()
+	if len(inputErrors) > 0 {
+		return dto.NewRegisterUserOutputData(nil, inputErrors), nil
+	}
+
 	generatedID, _ := uuid.NewRandom()
-	id, _ := vo.NewID(generatedID.String())
-	name, _ := vo.NewUserName(i.input.Name())
-	email, _ := vo.NewEmail(i.input.Email())
-	password, _ := vo.NewPassword(i.input.Password())
+	id, err := vo.NewID(generatedID.String())
+	if err != nil {
+		return nil, err
+	}
 	user := entity.NewUser(*id, *name, *email, *password)
 
+	authUser, err := i.userRepository.CreateUser(*user)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.NewRegisterUserOutputData(authUser, nil), nil
+}
+func (i registerUserInteractor) validateInputs() (*vo.UserName, *vo.Email, *vo.Password, dto.InputErrors) {
+	inputErrors := dto.InputErrors{}
+	name, err := vo.NewUserName(i.input.Name())
+	if err != nil {
+		inputErrors["name"] = err
+	}
+	email, err := vo.NewEmail(i.input.Email())
+	if err != nil {
+		inputErrors["email"] = err
+	}
+	password, err := vo.NewPassword(i.input.Password())
+	if err != nil {
+		inputErrors["password"] = err
+	}
+
 	service := service.NewUserService(i.userRepository)
-	if service.Exists(*user) {
-		return nil, fmt.Errorf("user already exists")
+	if err := service.ExistsName(*name); err != nil {
+		inputErrors["name"] = err
+	}
+	if err := service.ExistsEmail(*email); err != nil {
+		inputErrors["email"] = err
 	}
 
-	authUser, dberror := i.userRepository.CreateUser(*user)
-	if dberror != nil {
-		return nil, dberror
-	}
-
-	output := dto.NewRegisterUserOutputData(*authUser)
-	return output, nil
+	return name, email, password, inputErrors
 }

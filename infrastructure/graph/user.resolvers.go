@@ -9,6 +9,7 @@ import (
 
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/adapter/controller"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/dao"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/custom_errors"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/model"
 )
 
@@ -16,14 +17,19 @@ import (
 func (r *mutationResolver) RegisterUser(ctx context.Context, input model.RegisterUser) (*model.User, error) {
 	userDao := &dao.UserDao{}
 	userController := controller.NewUserController(userDao)
-	viewModel, err := userController.RegisterUser(input.Name, input.Email, input.Password)
+	outputData, err := userController.RegisterUser(input.Name, input.Email, input.Password)
 	if err != nil {
 		return nil, err
 	}
+
+	if inputErrors := outputData.InputErrors(); inputErrors != nil {
+		return nil, custom_errors.GenerateGraphqlInputError(ctx, inputErrors)
+	}
+
 	dataModel := &model.User{
-		ID:    viewModel.ID(),
-		Name:  viewModel.Name(),
-		Email: viewModel.Email(),
+		ID:    outputData.User().ID(),
+		Name:  outputData.User().Name(),
+		Email: outputData.User().Email(),
 	}
 	return dataModel, nil
 }

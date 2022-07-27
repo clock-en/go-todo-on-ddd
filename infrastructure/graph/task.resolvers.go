@@ -8,6 +8,7 @@ import (
 
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/adapter/controller"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/dao"
+	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/custom_errors"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/generated"
 	"github.com/clock-en/go-todo-on-ddd-on-ddd/infrastructure/graph/model"
 )
@@ -16,15 +17,20 @@ import (
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTask) (*model.Task, error) {
 	taskDao := &dao.TaskDao{}
 	taskController := controller.NewTaskController(taskDao)
-	viewModel, err := taskController.CreateTask(input.Title, input.Content, input.UserID)
+	outputData, err := taskController.CreateTask(input.Title, input.Content, input.UserID)
 	if err != nil {
 		return nil, err
 	}
+
+	if inputErrors := outputData.InputErrors(); inputErrors != nil {
+		return nil, custom_errors.GenerateGraphqlInputError(ctx, inputErrors)
+	}
+
 	dataModel := &model.Task{
-		ID:      viewModel.ID(),
-		Title:   viewModel.Title(),
-		Content: viewModel.Content(),
-		UserID:  viewModel.UserID(),
+		ID:      outputData.Task().ID(),
+		Title:   outputData.Task().Title(),
+		Content: outputData.Task().Content(),
+		UserID:  outputData.Task().UserID(),
 	}
 	return dataModel, nil
 }
@@ -33,31 +39,40 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input model.CreateTas
 func (r *queryResolver) Task(ctx context.Context, id string) (*model.Task, error) {
 	taskDao := &dao.TaskDao{}
 	taskController := controller.NewTaskController(taskDao)
-	viewModel, err := taskController.FindTask(id)
+	outputData, err := taskController.FindTask(id)
 	if err != nil {
 		return nil, err
 	}
 
+	if inputErrors := outputData.InputErrors(); inputErrors != nil {
+		return nil, custom_errors.GenerateGraphqlInputError(ctx, inputErrors)
+	}
+
 	dataModel := &model.Task{
-		ID:      viewModel.ID(),
-		Title:   viewModel.Title(),
-		Content: viewModel.Content(),
-		UserID:  viewModel.UserID(),
+		ID:      outputData.Task().ID(),
+		Title:   outputData.Task().Title(),
+		Content: outputData.Task().Content(),
+		UserID:  outputData.Task().UserID(),
 	}
 	return dataModel, nil
 }
 
 // Tasks is the resolver for the tasks field.
 func (r *queryResolver) Tasks(ctx context.Context, userID string) ([]*model.Task, error) {
+	dataModel := []*model.Task{}
+
 	taskDao := &dao.TaskDao{}
 	taskController := controller.NewTaskController(taskDao)
-	viewModel, err := taskController.FetchUserTasks(userID)
+	outputData, err := taskController.FetchUserTasks(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	dataModel := []*model.Task{}
-	for _, task := range viewModel {
+	if inputErrors := outputData.InputErrors(); inputErrors != nil {
+		return nil, custom_errors.GenerateGraphqlInputError(ctx, inputErrors)
+	}
+
+	for _, task := range outputData.Tasks() {
 		dataModel = append(dataModel, &model.Task{
 			ID:      task.ID(),
 			Title:   task.Title(),
